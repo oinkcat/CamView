@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/new/player_controls">
+        <file>res/player_end.png</file>
+        <file>res/player_fwd.png</file>
+        <file>res/player_pause.png</file>
+        <file>res/player_play.png</file>
+        <file>res/player_rev.png</file>
+        <file>res/player_start.png</file>
+        <file>res/save.png</file>
+        <file>res/set_start.png</file>
+        <file>res/set_end.png</file>
+    </qresource>
+    <qresource prefix="/new/form_icons"/>
+    <qresource prefix="/new/controls">
+        <file>res/close.png</file>
+        <file>res/video.png</file>
+        <file>res/minimize.png</file>
+        <file>res/settings.png</file>
+        <file>res/audio.png</file>
+    </qresource>
+    <qresource prefix="/new/font">
+        <file>res/trs-million.regular.ttf</file>
+    </qresource>
+    <qresource prefix="/new/context_actions">
+        <file>res/delete.png</file>
+        <file>res/settings-small.png</file>
+        <file>res/repair.png</file>
+    </qresource>
+</RCC>
