@@ -1,2 +1,4 @@
 # CamView
 Simple MJPEG IP cameras survelliance application
+
+In order to run correctly, place file './test_config/cam_config.conf' into your user directory
