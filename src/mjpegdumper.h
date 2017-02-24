@@ -24,7 +24,7 @@ signals:
 public slots:
     void beginDump();
     void endDump();
-    void dumpFrameData(QByteArray *frameData);
+    void dumpFrameData(QByteArray &frameData);
     
 private:
     QString getDumpDirectory();

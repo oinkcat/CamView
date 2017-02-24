@@ -6,8 +6,7 @@ const int CHECK_MANUAL_RECONNECT_INTERVAL = 15000;
 const int HANG_INTERVAL = 20000;
 
 MJPegSource::MJPegSource(QString mjpegUrl, QObject *parent) :
-    QObject(parent), mjpegUrl(mjpegUrl),
-    manager(this), isReconnectPlanned(false)
+    QObject(parent), manager(this), isReconnectPlanned(false), mjpegUrl(mjpegUrl)
 {
     this->status = Normal;
     connect(&hangDetector, SIGNAL(timeout()), SLOT(sourceHung()));
@@ -88,7 +87,7 @@ void MJPegSource::mjpegDataRead()
         QByteArray frameData = mjpegResponse->read(nextFrameLength);
         if(nthFrameToSkip < 0 || frameNumber % nthFrameToSkip > 0) {
             if(frameData.length() >= MIN_LENGTH) {
-                emit frameReceived(&frameData);
+                emit frameReceived(frameData);
             }
         }
         hangDetector.start(HANG_INTERVAL);
@@ -120,7 +119,7 @@ QString MJPegSource::getStatusDescription()
 // REGION: Error handling
 void MJPegSource::requestFinished()
 {
-    qDebug(QString("%1 - unexpected end!").arg(this->mjpegUrl).toAscii());
+    qDebug() << QString("%1 - unexpected end!").arg(this->mjpegUrl);
     if(status != Hang && !isReconnectPlanned) {
         status = BrokenConnection;
         reconnect();
@@ -131,7 +130,7 @@ void MJPegSource::onError(QNetworkReply::NetworkError error)
 {
     bool isRefused = error == QNetworkReply::ConnectionRefusedError ||
             error == QNetworkReply::RemoteHostClosedError;
-    qDebug(QString("%1 - network error (%2)!").arg(this->mjpegUrl).arg(int(error)).toAscii());
+    qDebug() << QString("%1 - network error (%2d)!").arg(this->mjpegUrl).arg(int(error));
     if(status != Hang && status != FailedToConnect && !isReconnectPlanned) {
         if(isRefused) {
             status = Rejected;
@@ -144,7 +143,7 @@ void MJPegSource::onError(QNetworkReply::NetworkError error)
 
 void MJPegSource::sourceHung()
 {
-    qDebug(QString("%1 - hang detected!").arg(this->mjpegUrl).toAscii());
+    qDebug() << QString("%1 - hang detected!").arg(this->mjpegUrl);
     if(status == Normal) {
         status = Hang;
         hangDetector.stop();

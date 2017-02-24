@@ -26,7 +26,6 @@ void Converter::watchForProgress(QProcess &mencProc)
         QString line = mencProc.readLine();
         if(line.startsWith("Pos:")) {
             emit progressChanged();
-            qDebug(line.toAscii().data());
         }
     }
 }

@@ -6,9 +6,9 @@ const int SHOW_HOST_ZONE = 32;
 const int REPAIR_STATUS_INTERVAL = 2000;
 
 CameraWidget::CameraWidget(Data::CameraInfo *info, QWidget *parent) :
-    QWidget(parent), source(NULL), detector(NULL), recorder(NULL),
-    name(info->name), frameReady(false), sourceError(false),
-    showHost(false), lastRepairStatus(-1)
+    QWidget(parent), name(info->name), showHost(false), frameReady(false),
+    lastRepairStatus(-1), sourceError(false),
+    source(NULL), detector(NULL), recorder(NULL)
 {
     if(isValid()) {
         createUtilityObjects(info->name, info->url, info->audioUrl);
@@ -40,7 +40,7 @@ void CameraWidget::createUtilityObjects(QString name, QString url, QString audio
 // Set event handlers and start activity
 void CameraWidget::start()
 {
-    connect(source, SIGNAL(frameReceived(QByteArray*)), SLOT(imageLoaded(QByteArray*)));
+    connect(source, SIGNAL(frameReceived(QByteArray&)), SLOT(imageLoaded(QByteArray&)));
     connect(source, SIGNAL(error()), SLOT(sourceFailed()));
     source->start();
     source->toggleFrameSkip(true);
@@ -88,24 +88,27 @@ Data::CameraInfo CameraWidget::getInfo()
     return myInfo;
 }
 
-void CameraWidget::imageLoaded(QByteArray *data)
+void CameraWidget::imageLoaded(QByteArray &data)
 {
-    QImage loadedFrame = QImage::fromData(*data, "JPG");
-    if(!loadedFrame.isNull() && loadedFrame.format() != QImage::Format_Invalid &&
-            loadedFrame.width() < MAX_IMG_WIDTH) {
-        frame = loadedFrame;
-        frameReady = true;
+    QImage loadedFrame = QImage::fromData(data, "jpg");
+    if(!loadedFrame.isNull()) {
+        bool correctFormat = loadedFrame.format() != QImage::Format_Invalid;
+        bool correctSize = loadedFrame.width() < MAX_IMG_WIDTH;
+        if(correctFormat && correctSize) {
+            frame = loadedFrame;
+            frameReady = true;
 
-        // Motion detection (if set)
-        if(isMotionDetecting()) {
-            detector->process(&frame);
-        } else {
-            detector->turnOff();
-        }
+            // Motion detection (if set)
+            if(isMotionDetecting()) {
+                detector->process(&frame);
+            } else {
+                detector->turnOff();
+            }
 
-        // Dump frame if recording
-        if(recording) {
-            recorder->dumpFrameData(data);
+            // Dump frame if recording
+            if(recording) {
+                recorder->dumpFrameData(data);
+            }
         }
     }
 }

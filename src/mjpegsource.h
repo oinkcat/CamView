@@ -37,19 +37,20 @@ public slots:
     void start();
 
 signals:
-    void frameReceived(QByteArray *data);
+    void frameReceived(QByteArray &data);
     void error();
 
 private:
     void reconnect();
-    bool isReconnectPlanned;
-
-    QTimer hangDetector;
-    QString mjpegUrl;
 
     QNetworkAccessManager manager;
     QNetworkReply *mjpegResponse;
     QByteArray buffer;
+
+    QTimer hangDetector;
+    bool isReconnectPlanned;
+
+    QString mjpegUrl;
 
     SourceStatus status;
     int nextFrameLength;

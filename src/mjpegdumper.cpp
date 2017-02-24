@@ -14,7 +14,7 @@ void MJpegDumper::run()
 }
 
 // Write new frame to record file
-void MJpegDumper::dumpFrameData(QByteArray *frameData)
+void MJpegDumper::dumpFrameData(QByteArray &frameData)
 {
     QByteArray *savingData = NULL;
     int jpegQuality = Config::getInstance()->getJpegQuality();
@@ -24,12 +24,12 @@ void MJpegDumper::dumpFrameData(QByteArray *frameData)
     QBuffer imageBuffer(&imageData);
     if(needRecode) {
         // Recode JPEG with given quality (if needed)
-        QImage imgFrame = QImage::fromData(*frameData);
+        QImage imgFrame = QImage::fromData(frameData);
         imageBuffer.open(QIODevice::WriteOnly);
         imgFrame.save(&imageBuffer, "JPG", jpegQuality);
         savingData = &imageData;
     } else {
-        savingData = frameData;
+        savingData = &frameData;
     }
 
     // Write headers and timestamp

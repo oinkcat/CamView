@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QPixmap>
+#include <QImageReader>
 #include <QPainter>
 #include <QPaintDevice>
 #include <QMouseEvent>
@@ -34,7 +35,7 @@ public:
 signals:
 
 private slots:
-    void imageLoaded(QByteArray *data);
+    void imageLoaded(QByteArray &data);
     void updateMotion(int percent);
     void startRecording();
     void sourceFailed();
@@ -70,16 +71,19 @@ private:
     bool frameReady;
     QImage frame;
     int lastRepairStatus;
+    bool sourceError;
+
     // MJPEG source
     MJPegSource *source;
+
     // Motion detection related
     MotionDetector *detector;
     int motionPercent;
     bool forceShowBar;
+
     // Video recording related
     MJpegDumper *recorder;
     bool recording;
-    bool sourceError;
     bool recordMarkShown;
     QTimer *recControlTimer;
     
